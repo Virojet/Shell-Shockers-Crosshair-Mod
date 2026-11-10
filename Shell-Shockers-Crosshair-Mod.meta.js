@@ -120,5 +120,5 @@
 // @match        *://zygote.cafe/*
 // @match        *://*.zygote.cafe/*
 // @run-at       document-start
-// @grant        unsafeWindow
+// @grant        none
 // ==/UserScript==

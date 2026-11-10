@@ -120,7 +120,7 @@
 // @match        *://zygote.cafe/*
 // @match        *://*.zygote.cafe/*
 // @run-at       document-start
-// @grant        unsafeWindow
+// @grant        none
 // ==/UserScript==
 
 /*
@@ -143,18 +143,13 @@
   const betterHud = () => Boolean(pageWin.SSB_VERSION || pageWin.__ssbSettings || pageWin.__ssbOpenHistory);
   if (betterHud()) return;
 
-  window.SSB_DISCORD = window.SSB_DISCORD || "https://discord.gg/saveearth";
-  window.SSB_YOUTUBE = window.SSB_YOUTUBE || "https://www.youtube.com/@subtovirojet?sub_confirmation=1";
+  window.SSB_DISCORD = "https://discord.gg/8naPZgzhrK";
+  window.SSB_YOUTUBE = "https://www.youtube.com/@subtovirojet?sub_confirmation=1";
   window.__ssbErr = window.__ssbErr || function () {};
-  window.__ssbGuiScale = window.__ssbGuiScale || function () { return 1; };
-  window.__ssbNativeFrame = window.__ssbNativeFrame || {
-    request: window.requestAnimationFrame.bind(window),
-    cancel: window.cancelAnimationFrame.bind(window)
-  };
 
   function ef(id) {
     try {
-      if (typeof window.BAWK?.play === "function") window.BAWK.play(id);
+      (pageWin.BAWK || window.BAWK)?.play?.(id);
     } catch (e) {}
   }
 
@@ -266,17 +261,6 @@ var CSS = `#ssb-dialog-overlay { position:fixed; inset:0; z-index:2147483647; di
 #ssb-dialog-panel .ssb-dlg-green { --c:#13ba65; --b:#046306; --i1:#0e8c4c; --i2:#87ddbb; }
 #ssb-dialog-panel .ssb-dlg-red { --c:#e81616; --b:#881a1a; --i1:#d11414; --i2:#e29092; }
 #ssb-dialog-panel .ssb-dlg-yolk { --c:#f79520; --b:#924e0c; --i1:#d97611; --i2:#f1c59a; }
-#ssb-dialog-panel .ssb-dlg-blue { --c:#0b93bd; --b:var(--ssb-ink); --i1:#086e8d; --i2:#00ade6; }
-#ssb-dialog-panel.ssb-dlg-wide { width:min(560px,100%); }
-#ssb-dialog-panel .ssb-dlg-report { max-height:min(58vh,560px); overflow-y:auto; margin:0 -4px; padding:0 4px; text-align:left; }
-#ssb-dialog-panel .ssb-dlg-sub { margin:14px 0 6px; font-size:13px; font-weight:900; letter-spacing:0.6px; text-transform:uppercase; color:#fff; text-shadow:rgba(0,0,0,0.3) 1px 1px 0; }
-#ssb-dialog-panel .ssb-dlg-sub:first-child { margin-top:0; }
-#ssb-dialog-panel .ssb-dlg-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
-#ssb-dialog-panel .ssb-dlg-list li { margin:0; padding:9px 12px; border-radius:8px; background:rgba(255,255,255,0.9); color:var(--ssb-ink); }
-#ssb-dialog-panel .ssb-dlg-list b { display:block; font-size:15px; font-weight:900; line-height:1.25; }
-#ssb-dialog-panel .ssb-dlg-list span { display:block; margin-top:3px; font-size:14px; font-weight:700; line-height:1.35; color:var(--ssb-muted); }
-#ssb-dialog-panel .ssb-dlg-facts li { display:flex; align-items:baseline; justify-content:space-between; gap:14px; padding:6px 12px; }
-#ssb-dialog-panel .ssb-dlg-facts b { flex:none; font-size:14px; }
 #ssb-dialog-panel .ssb-dlg-facts span { margin:0; text-align:right; }
 #ssb-toast-stack { position:fixed; top:14px; left:0; right:0; z-index:2147483647; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none; font-family:"Nunito",system-ui,sans-serif; }
 #ssb-toast-stack * { font-size:inherit; letter-spacing:normal; }
@@ -284,8 +268,7 @@ var CSS = `#ssb-dialog-overlay { position:fixed; inset:0; z-index:2147483647; di
 #ssb-toast-stack .ssb-toast-success .ssb-toast-text::before { content:"\\2713"; display:inline-block; width:20px; height:20px; margin-right:8px; border-radius:50%; background:#13ba65; color:#fff; font-size:13px; line-height:20px; text-align:center; vertical-align:1px; }
 #ssb-toast-stack .ssb-toast-error { background:#ffe1e1; border-color:var(--ssb-red); color:#8a1414; }
 #ssb-toast-stack .ssb-toast-code { margin-top:6px; padding:5px 8px; border-radius:6px; background:rgba(255,255,255,0.75); font-family:Consolas,"Courier New",monospace; font-size:13px; font-weight:700; white-space:normal; overflow-wrap:anywhere; user-select:text; cursor:text; }
-#ssb-toast-stack .ssb-toast-out { opacity:0; }
-.ssb-new-pill { display:inline-block; margin-left:8px; padding:0; background:none; color:#e8590c; font-family:"Nunito",system-ui,sans-serif; font-size:11px; font-weight:900; font-style:italic; letter-spacing:0.6px; line-height:1; vertical-align:super; pointer-events:none; cursor:default; flex-shrink:0; }
+#ssb-toast-stack .ssb-toast-out { opacity:0; }.ssb-new-pill { display:inline-block; margin-left:8px; padding:0; background:none; color:#e8590c; font-family:"Nunito",system-ui,sans-serif; font-size:11px; font-weight:900; font-style:italic; letter-spacing:0.6px; line-height:1; vertical-align:super; pointer-events:none; cursor:default; flex-shrink:0; }
 @keyframes ssb-pop-in { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:none; } }
 @keyframes ssb-toast-in { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
 `;
@@ -298,7 +281,7 @@ s.textContent = CSS;
 }
 function sound(name) {
 try {
-if (window.BAWK && window.BAWK.play) window.BAWK.play(name);
+ef(name);
 } catch (e) {
 window.__ssbErr("ui#1", e)
 }
@@ -525,192 +508,6 @@ if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.wr
 legacy);
 else legacy();
 }
-function copyText(text, note) {
-var ok = function() {
-toast(note || "Copied to clipboard.", {
-type: "success"
-});
-};
-var legacy = function() {
-var back = document.activeElement,
-ta = node("textarea"),
-done = false;
-ta.value = text;
-ta.readOnly = true;
-ta.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0;";
-document.body.appendChild(ta);
-try {
-ta.select();
-done = document.execCommand("copy");
-} catch (e) {
-window.__ssbErr("ui#4", e)
-}
-ta.remove();
-try {
-if (back && back.focus) back.focus({
-preventScroll: true
-});
-} catch (e) {
-window.__ssbErr("ui#5", e)
-}
-if (done) ok();
-else toast("Your browser blocked copying.", {
-type: "error"
-});
-};
-if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok,
-legacy);
-else legacy();
-}
-var snapLib = null,
-snapFonts = null;
-function snapLoad() {
-if (window.htmlToImage && typeof window.htmlToImage === "object") return Promise.resolve(window
-.htmlToImage);
-return snapLib || (snapLib = new Promise(function(resolve, reject) {
-var sc = document.createElement("script");
-sc.src =
-"https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js";
-sc.integrity =
-"sha512-7tWCgq9tTYS/QkGVyKrtLpqAoMV9XIUxoou+sPUypsaZx56cYR/qio84fPK9EvJJtKvJEwt7vkn6je5UVzGevw==";
-sc.crossOrigin = "anonymous";
-sc.referrerPolicy = "no-referrer";
-sc.onload = function() {
-if (window.htmlToImage && typeof window.htmlToImage === "object") resolve(window
-.htmlToImage);
-else {
-snapLib = null;
-reject(new Error("html-to-image didn't load"));
-}
-};
-sc.onerror = function() {
-snapLib = null;
-reject(new Error("html-to-image failed to load"));
-};
-(document.head || document.documentElement).appendChild(sc);
-}));
-}
-function snapFontCSS() {
-return snapFonts || (snapFonts = fetch(
-"https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Sigmar+One&display=swap"
-).then(function(r) {
-if (!r.ok) throw new Error("fonts: HTTP " + r.status);
-return r.text();
-}).then(function(css) {
-var latin = css.split(/(?=\/\* )/).filter(function(b) {
-return /^\/\* latin \*\//.test(b);
-}).join("");
-if (latin) css = latin;
-var urls = [],
-re = /url\((https:[^)]+)\)/g,
-m;
-while ((m = re.exec(css)))
-if (urls.indexOf(m[1]) < 0) urls.push(m[1]);
-return Promise.all(urls.map(function(u) {
-return fetch(u).then(function(r) {
-if (!r.ok) throw new Error("font: HTTP " + r.status);
-return r.blob();
-}).then(function(b) {
-return new Promise(function(res, rej) {
-var fr = new FileReader();
-fr.onload = function() {
-res([u, fr.result]);
-};
-fr.onerror = function() {
-rej(fr.error);
-};
-fr.readAsDataURL(b);
-});
-});
-})).then(function(pairs) {
-pairs.forEach(function(p) {
-css = css.split(p[0]).join(p[1]);
-});
-return css;
-});
-}).catch(function(e) {
-window.__ssbErr("ui#6", e);
-snapFonts = null;
-return "";
-}));
-}
-function copyImage(panel, btn, text) {
-if (!navigator.clipboard || !navigator.clipboard.write || typeof window.ClipboardItem !== "function") {
-copyText(text, "Your browser can't copy pictures, so the report was copied as text.");
-return;
-}
-var label = btn ? btn.textContent : "";
-if (btn) {
-btn.disabled = true;
-btn.textContent = "Copying…";
-}
-var done = function() {
-if (!btn) return;
-var lost = !document.activeElement || document.activeElement === document.body;
-btn.disabled = false;
-btn.textContent = label;
-if (lost && btn.isConnected) btn.focus({
-preventScroll: true
-});
-};
-var png = Promise.all([snapLoad(), snapFontCSS()]).then(function(r) {
-var lib = r[0],
-host = node("div"),
-c = panel.cloneNode(true),
-foot, rep;
-host.setAttribute("aria-hidden", "true");
-host.style.cssText =
-"position:fixed;left:-100000px;top:0;width:560px;font-family:\"Nunito\",system-ui,sans-serif;pointer-events:none;";
-c.removeAttribute("role");
-c.removeAttribute("aria-modal");
-c.style.cssText =
-"zoom:1 !important;animation:none !important;box-shadow:none !important;margin:0 !important;";
-foot = c.querySelector(".ssb-dlg-foot");
-if (foot) foot.remove();
-rep = c.querySelector(".ssb-dlg-report");
-if (rep) {
-rep.style.maxHeight = "none";
-rep.style.overflow = "visible";
-}
-host.appendChild(c);
-document.body.appendChild(host);
-return lib.toBlob(c, {
-pixelRatio: 2,
-width: c.offsetWidth,
-height: c.offsetHeight,
-fontEmbedCSS: r[1] || "",
-backgroundColor: null
-}).then(function(blob) {
-host.remove();
-if (!blob) throw new Error("no picture");
-return blob;
-}, function(e) {
-host.remove();
-throw e;
-});
-});
-png.catch(function(e) {
-window.__ssbErr("ui#8", e);
-});
-try {
-navigator.clipboard.write([new window.ClipboardItem({
-"image/png": png
-})]).then(function() {
-done();
-toast("Picture copied to clipboard.", {
-type: "success"
-});
-}, function(e) {
-done();
-window.__ssbErr("ui#7", e);
-copyText(text, "Couldn't copy the picture, so the report was copied as text.");
-});
-} catch (e) {
-done();
-window.__ssbErr("ui#7", e);
-copyText(text, "Couldn't copy the picture, so the report was copied as text.");
-}
-}
 var api = {
 toast: toast,
 confirm: function(o) {
@@ -793,51 +590,10 @@ text: "Your browser blocked the clipboard. Copy the code below.",
 code: code
 });
 };
-if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard
-.writeText(code).then(done, fallback);
+if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(code).then(done, fallback);
 fallback();
 return Promise.resolve();
 },
-report: function(o) {
-o = o || {};
-var body = node("div", "ssb-dlg-report");
-(o.sections || []).forEach(function(sec) {
-if (!sec.items || !sec.items.length) return;
-if (sec.title) body.appendChild(node("div", "ssb-dlg-sub", sec.title));
-var list = node("ul", "ssb-dlg-list" + (sec.facts ? " ssb-dlg-facts" : ""));
-sec.items.forEach(function(it) {
-var li = node("li");
-li.appendChild(node("b", null, it.label));
-if (it.text) li.appendChild(node("span", null, it.text));
-list.appendChild(li);
-});
-body.appendChild(list);
-});
-var buttons = [{
-label: "Close",
-kind: "blue",
-value: undefined,
-primary: true
-}];
-if (o.copy) buttons.unshift({
-label: "Copy",
-kind: "yolk",
-run: o.image ? function(input, btn, panel) {
-copyImage(panel, btn, o.copy);
-} : function() {
-copyText(o.copy);
-}
-});
-return dialog({
-title: o.title,
-text: o.text,
-body: body,
-wide: true,
-cancel: undefined,
-buttons: buttons
-});
-},
-copyText: copyText,
 ensureCss: ensureCss
 };
 return api;
@@ -846,12 +602,10 @@ return api;
   // ---- Viewport Box, Dot Border v2 Migration & DOM Style Helpers ----
   window.__ssbViewBox = function() { return { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight }; };
   if (!localStorage.getItem("ch2-dotBorderV2")) {
-localStorage
-.removeItem("ch2-dotBorder");
+localStorage.removeItem("ch2-dotBorder");
 localStorage.setItem("ch2-dotBorderV2", "1");
 }
-  let e = {},
-t = new Map;
+  let t = new Map;
 function o(e) {
 let o = t.get(e);
 if (o && o.isConnected) return o;
@@ -860,35 +614,15 @@ if (n) t.set(e, n);
 else t.delete(e);
 return n;
 }
-let n = new Map;
-function i(e) {
-let t = n.get(e);
-if (t && t.isConnected) return t;
-let o = document.querySelector(e);
-if (o) n.set(e, o);
-else n.delete(e);
-return o;
-}
 function a(e, n, i) {
 let a = o(e);
 if (!a) {
 (a = document.createElement("style")).id = e;
-(i || document.head || document.documentElement)
-.appendChild(a);
+(i || document.head || document.documentElement).appendChild(a);
 t.set(e, a);
 }
 if (undefined !== n && a.textContent !== n) a.textContent = n;
 return a;
-}
-function r(e, n, i, r) {
-if (i) a(e, n, r);
-else {
-let s = o(e);
-if (s) {
-s.remove();
-t.delete(e);
-}
-}
 }
 
   // ---- Crosshair State, History, Profiles & In-Game Reticle Renderer ----
@@ -907,8 +641,7 @@ hideDot: JSON.parse(localStorage.getItem("ch2-hideDot") ?? "false"),
 hideDotShotgun: JSON.parse(localStorage.getItem("ch2-hideDotShotgun") ?? "false"),
 dotShape: (localStorage.getItem("ch2-dotShape") ?? "dot").replace(/^"|"$/g, ""),
 dotColor: (localStorage.getItem("ch2-dotColor") ?? "#ffffff").replace(/^"|"$/g, ""),
-dotBorder: (localStorage.getItem("ch2-dotBorder") ?? localStorage.getItem("ch2-armBorder") ?? "#000000")
-.replace(/^"|"$/g, ""),
+dotBorder: (localStorage.getItem("ch2-dotBorder") ?? localStorage.getItem("ch2-armBorder") ?? "#000000").replace(/^"|"$/g, ""),
 dotBorderWidth: parseFloat(localStorage.getItem("ch2-dotBorderWidth") ?? "0.05"),
 dotRound: JSON.parse(localStorage.getItem("ch2-dotRound") ?? "false"),
 dotOpacity: parseFloat(localStorage.getItem("ch2-dotOpacity") ?? "1"),
@@ -1028,8 +761,7 @@ else {
 G();
 Y();
 }
-if (window
-.__ssbChPaint) window.__ssbChPaint();
+if (window.__ssbChPaint) window.__ssbChPaint();
 }
 function _chSaved() {
 let n = z(),
@@ -1060,8 +792,7 @@ if (!p || !window.__ssbChHist.dirty()) return false;
 _chUndo.push(JSON.stringify(A));
 if (_chUndo.length > 40) _chUndo.shift();
 _chRedo = [];
-_chApply(JSON
-.stringify(p));
+_chApply(JSON.stringify(p));
 return true
 },
 canUndo: () => _chUndo.length > 0 || !!_chT,
@@ -1084,7 +815,7 @@ ev.preventDefault();
 ev.stopPropagation();
 let done = k === "y" || ev.shiftKey ? window.__ssbChHist.redo() : window.__ssbChHist.undo();
 if (done) try {
-if (window.BAWK && window.BAWK.play) window.BAWK.play("ui_click");
+ef("ui_click");
 } catch (e) {
 window.__ssbErr("crosshair.undo", e)
 }
@@ -1106,11 +837,6 @@ Object.keys(o).forEach(e => F(e, o[e]));
 function _sd(e, t) {
 if (e && e.style.display !== t) e.style.display = t;
 }
-window.__ssbPerf = {
-tick: 0,
-mods: 0,
-harm: 0
-};
 let T = "ch2-profiles",
 H = "ch2-currentProfile";
 function N() {
@@ -1197,14 +923,12 @@ Hd = Math.max(1, Math.round(o * fs * dpr)),
 Wd = Math.max(1, Math.round(n * fs * dpr)),
 Bd = i * fs > .25 ? Math.max(1, Math.round(i * fs * dpr)) :
 0;
-if (Bd && 2 * Bd > Math.min(Wd, Hd) && (A.armOutlineEnabled === false || String(A.armBorder)
-.toLowerCase() ===
+if (Bd && 2 * Bd > Math.min(Wd, Hd) && (A.armOutlineEnabled === false || String(A.armBorder).toLowerCase() ===
 String(A.armColor).toLowerCase())) Bd = 0;
 _chHalf = Wd % 2 / 2;
 let g = A.armGap * us * dpr,
 gap = `${A.armGap}px * var(--ssb-ch-scale, var(--ssb-ui-scale, 1)) + ${px(Math.round(g - _chHalf) + _chHalf - g)}`;
-e.innerHTML = `
-			.crosshair {
+e.innerHTML = `.crosshair {
 				position: absolute !important;
 				transform-origin: 50% calc(-1 * (${gap})) !important;
 				top: calc(50% + ${gap} + var(--ssb-ch-dy, 0px)) !important;
@@ -1212,20 +936,17 @@ e.innerHTML = `
 				border: solid ${Bd ? sz(Bd) : "0px"} ${A.armOutlineEnabled === false ? "transparent" : A.armBorder} !important;
 				height: ${sz(Hd)} !important;
 				opacity: ${A.armOpacity} !important;
-			}
-			.crosshair.normal {
+			}.crosshair.normal {
 				left: calc(50% - ${px(Wd / 2)} + var(--ssb-ch-dx, 0px)) !important;
 				background: ${A.armColor} !important;
 				background-clip: ${A.armOutlineEnabled === false ? "padding-box" : "border-box"} !important;
 				width: ${sz(Wd)} !important;
-			}
-			.crosshair.powerful {
+			}.crosshair.powerful {
 				left: calc(50% - ${px(Wd / 2)} + var(--ssb-ch-dx, 0px)) !important;
 				background: red !important;
 				background-clip: ${A.armOutlineEnabled === false ? "padding-box" : "border-box"} !important;
 				width: ${sz(Wd)} !important;
-			}
-			.shotReticle.fill.normal {
+			}.shotReticle.fill.normal {
 				border-color: ${A.armColor} !important;
 				border-left: solid transparent !important;
 				border-right: solid transparent !important;
@@ -1239,8 +960,7 @@ function _chAlign(t) {
 if (!t) return;
 if (window.IntersectionObserver && (!_chIO || _chIO.t !== t)) {
 if (_chIO) _chIO.disconnect();
-_chIO = new IntersectionObserver(es => es.forEach(en => en.isIntersecting && _chAt(en.target, en
-.boundingClientRect)));
+_chIO = new IntersectionObserver(es => es.forEach(en => en.isIntersecting && _chAt(en.target, en.boundingClientRect)));
 _chIO.t = t;
 _chIO.observe(t);
 }
@@ -1426,36 +1146,7 @@ function _Yimpl() {
 let e = document.getElementById("ch2-preview-wrap");
 if (!e) return;
 let t = localStorage.getItem("ch2-previewBg") || "#ffffff",
-o = A.enabled ? A : {
-hideCrosshair: false,
-armColor: "#ffffff",
-armBorder: "#000000",
-armLength: .75,
-armWidth: .3,
-armOpacity: 1,
-armRotation: 0,
-armScale: 1,
-hideDot: false,
-hideDotShotgun: false,
-dotShape: "dot",
-dotColor: "#ffffff",
-dotRound: false,
-dotOpacity: 1,
-dotPlusLen: 8,
-dotPlusWidth: 2,
-dotScale: 1,
-plusScale: 1,
-staticColor: "#ffffff",
-staticBorder: "#000000",
-staticOpacity: 1,
-staticLength: .75,
-staticWidth: .3,
-staticGap: 3,
-staticOutlineEnabled: true,
-armOutlineEnabled: true,
-dotOutlineEnabled: true,
-stillScale: 1
-},
+o = A.enabled ? A : B,
 n = o.armLength * o.armScale,
 i = o.armWidth * o.armScale,
 a = Math.min(.05 * o.armScale, .3 * i).toFixed(4),
@@ -1479,11 +1170,9 @@ let c = o.hideCrosshair ? "" : `
 				<div style="${r}transform:rotate(270deg);"></div>
 		`;
 e.style.background = t;
-document.querySelectorAll("#mod-crosshair-section .ch2-bg-swatch").forEach(b => b
-.classList.toggle("on", b.dataset.hex === String(t).toLowerCase()));
+document.querySelectorAll("#mod-crosshair-section .ch2-bg-swatch").forEach(b => b.classList.toggle("on", b.dataset.hex === String(t).toLowerCase()));
 e.style.position = "relative";
-e
-.innerHTML = `<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+e.innerHTML = `<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
 			<div style="position:relative;width:0;height:0;font-size: 24px;zoom:calc(1 / var(--ssb-gui, 1));transform:rotate(${o.armRotation}deg);">
 				${c}
 				${s}
@@ -1570,8 +1259,7 @@ obs = null;
 const apply = function() {
 try {
 let w = lbl && lbl.isConnected ? lbl : document.getElementById("weaponName"),
-want = !!(A.enabled && A.hideDotShotgun && w && /^\s*Dozen Gauge\s*$/i.test(w
-.textContent || ""));
+want = !!(A.enabled && A.hideDotShotgun && w && /^\s*Dozen Gauge\s*$/i.test(w.textContent || ""));
 if (want !== on) {
 on = want;
 a("ch2-sg-hide", want ?
@@ -1605,6 +1293,11 @@ inMatch: true
 });
 })
 ();
+  window.__ssbMenuPoll(function() {
+    let rd = document.getElementById("reticleDot");
+    if (rd && rd !== _lastReticleDot) { _lastReticleDot = rd; if (A.enabled) q(); }
+    if (!document.pointerLockElement && A.enabled && _chDirty) { _chDirty = false; q(); }
+  }, 1000, { inMatch: true });
 
   // ---- Share Code Bit-Packers & Unpackers (X-, SSB-, Base64, Valorant) ----
   function _ssbPackNum(val, scale = 100, offset = 0) {
@@ -1706,8 +1399,7 @@ const PRESET = ["#ffffff", "#00ff00", "#7fff00", "#dfff00", "#ffff00", "#00ffff"
 ];
 const ci = Math.round(num("c", 0));
 let col = PRESET[ci] || "#ffffff";
-if (ci === 8 && /^[0-9a-f]{6}([0-9a-f]{2})?$/i.test(P.u || "")) col = "#" + P.u
-.slice(0, 6).toLowerCase();
+if (ci === 8 && /^[0-9a-f]{6}([0-9a-f]{2})?$/i.test(P.u || "")) col = "#" + P.u.slice(0, 6).toLowerCase();
 const outline = num("h", 1) !== 0 && num("t", 1) > 0 && num("o", .5) >= .2;
 const ob = outline ? 1.053 : 0;
 const iT = num("0t", 2),
@@ -1752,8 +1444,7 @@ const u = Math.max(0, p.armWidth - .1),
 need = u > 0 ? F / u : 99;
 if (outline ? need <= 1.15 : need <= 4) {
 p.dotScale = R2(CL(need, outline ? .23 : .1, 5));
-if (outline) p.dotBorderWidth = Math.min(.2, Math.ceil(Math.max(1, Math
-.round(Bt / p.dotScale)) / fsH * 100) / 100);
+if (outline) p.dotBorderWidth = Math.min(.2, Math.ceil(Math.max(1, Math.round(Bt / p.dotScale)) / fsH * 100) / 100);
 } else {
 const wide = R2(.1 + F),
 s = R2(CL(em(iT + 2 * ob) / wide, .1, 5));
@@ -1781,8 +1472,7 @@ return p;
 }
 function unpackCrosshair(code) {
 if (!code) throw new Error("Invalid code format");
-if (_ssbIsValorantCode(code)) return _ssbValorantCrosshair(code, B, window
-.innerHeight);
+if (_ssbIsValorantCode(code)) return _ssbValorantCrosshair(code, B, window.innerHeight);
 if (code.startsWith("X-")) {
 let body = code.substring(2);
 let p = Object.assign({}, B),
@@ -2010,6 +1700,7 @@ return p;
   // ---- Tooltip & Mini Crosshair Renderer ----
   let initTooltip = () => {
 let tooltipEl = document.createElement("div");
+if (document.getElementById("ssb-global-tooltip")) return;
 tooltipEl.id = "ssb-global-tooltip";
 tooltipEl.style.cssText =
 "position:fixed;display:none;z-index:2147483647;background:#ffffff;color:#0C576F;padding:8px 12px;border-radius:8px;border:2px solid #2db8d4;font-family:'Nunito',system-ui,sans-serif;font-size:13px;font-weight:700;max-width:250px;box-shadow:0 4px 15px rgba(0,0,0,0.25);pointer-events:none;line-height:1.3;opacity:0;transition:opacity 0.12s cubic-bezier(0.4,0,0.2,1);";
@@ -2020,8 +1711,7 @@ let tipFor = null,
 tipMove = e => {
 let t = tipFor;
 if (t) {
-if (!(t.contains(e.target) || t.isConnected && t.matches(":focus-visible") && t.getClientRects()
-.length)) hide();
+if (!(t.contains(e.target) || t.isConnected && t.matches(":focus-visible") && t.getClientRects().length)) hide();
 }
 };
 let show = target => {
@@ -2033,14 +1723,12 @@ if (document.body.lastElementChild !== tooltipEl) document.body.appendChild(tool
 tooltipEl.textContent = text;
 tooltipEl.style.display = "block";
 let rect = target.getBoundingClientRect();
-let tooltipRect = tooltipEl
-.getBoundingClientRect();
+let tooltipRect = tooltipEl.getBoundingClientRect();
 let vb = window.__ssbViewBox();
 let left = rect.left + (rect.width - tooltipRect.width) / 2;
 let top = rect.top - tooltipRect.height - 8;
 if (left < vb.left + 10) left = vb.left + 10;
-if (left + tooltipRect.width > vb.left + vb.width - 10) left = vb.left + vb.width - tooltipRect
-.width - 10;
+if (left + tooltipRect.width > vb.left + vb.width - 10) left = vb.left + vb.width - tooltipRect.width - 10;
 if (top < vb.top + 10) top = rect.bottom + 8;
 top = Math.max(vb.top + 10, Math.min(top, vb.top + vb.height - tooltipRect.height -
 10
@@ -2057,8 +1745,7 @@ if (tooltipEl.style.opacity === "0") return;
 tooltipEl.style.opacity = "0";
 let onTransitionEnd = () => {
 if (tooltipEl.style.opacity === "0") tooltipEl.style.display = "none";
-tooltipEl
-.removeEventListener("transitionend", onTransitionEnd);
+tooltipEl.removeEventListener("transitionend", onTransitionEnd);
 };
 tooltipEl.addEventListener("transitionend", onTransitionEnd)
 };
@@ -2082,8 +1769,6 @@ let t = e.target;
 if (t && t.matches && t.matches("[data-tooltip]")) hide();
 })
 };
-if (document.body) initTooltip();
-else document.addEventListener("DOMContentLoaded", initTooltip);
 function xhMini(o, budget) {
 o = _withDot(o);
 let n = o.armLength * o.armScale,
@@ -2110,8 +1795,7 @@ let c = o.hideCrosshair ? "" :
 let extPx = 10;
 if (!o.hideCrosshair) extPx = Math.max(extPx, 2 * (n * 24 + (o.armGap || 0)));
 if (!o.hideDot) {
-if (o.dotShape === "still") extPx = Math.max(extPx, 2 * ((o.staticGap + o.staticLength * 24) * o
-.stillScale));
+if (o.dotShape === "still") extPx = Math.max(extPx, 2 * ((o.staticGap + o.staticLength * 24) * o.stillScale));
 else if (o.dotShape === "plus") extPx = Math.max(extPx, 2 * o.dotPlusLen * o.plusScale);
 else extPx = Math.max(extPx, o.armWidth * 24 * o.dotScale);
 }
@@ -2124,31 +1808,13 @@ return `<div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex
     if (betterHud()) return standDown();
     if (!active || document.hidden || document.pointerLockElement) return;
     try {
-      let U = window.__ssbUI;
       let t = document.getElementById("settings_misc");
       if (!t || document.getElementById("mod-crosshair-section")) return;
       if (window.__ssbUI) window.__ssbUI.ensureCss();
       if (!document.getElementById("mod-settings-style")) {
 let n = document.createElement("style");
 n.id = "mod-settings-style";
-n.textContent =
-`#mod-settings-section { font-family: "Nunito", system-ui, sans-serif !important; }
-#mod-settings-section .mod-header { font-family:"Sigmar One", sans-serif !important; font-weight:normal; font-size: 24px; text-transform:uppercase; color:var(--ssb-ink); margin: 0 0 12px 0; }
-#mod-settings-section .mod-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap: 10px 40px; margin-bottom: 20px; }
-#mod-settings-section .mod-item { display:flex; flex-direction:row; align-items:center; gap:20px; cursor:pointer; -webkit-user-select:none; user-select:none; margin-bottom:0; }
-#mod-settings-section .mod-item input[type="checkbox"] { position:absolute; opacity:0; width:0; height:0; pointer-events:none; }
-#mod-settings-section .mod-box { width: 36px; height: 36px; border-radius: 9px; background:#ffffff !important; opacity: 1 !important; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-#mod-settings-section .mod-box::after { content:''; display:none; width: 9px; height: 18px; border: 5px solid var(--ssb-blue); border-top:none; border-left:none; transform: rotate(45deg); margin-top: -4px; }
-#mod-settings-section .mod-item input:checked ~ .mod-box::after { display:block; }
-#mod-settings-section .mod-label { font-family:"Nunito", system-ui, sans-serif !important; font-size: 22px; font-weight:700; color:var(--ssb-blue); line-height:1.2; }
-#mod-settings-section .mod-slider-container { grid-column:1 / -1; display:flex; flex-direction:row; align-items:center; gap:24px; margin:15px 0 30px 0; }
-#mod-settings-section .mod-slider-label { font-family:"Nunito", system-ui, sans-serif !important; font-size: 22px; font-weight:700; color:var(--ssb-blue); min-width:200px; text-align:left; }
-#mod-settings-section .mod-slider { -webkit-appearance:none; flex:1; height:10px; border-radius:5px; background:#ffffff !important; border: 1px solid rgba(12,87,111,0.15); outline:none; cursor:pointer; }
-#mod-settings-section .mod-slider::-webkit-slider-thumb { -webkit-appearance:none; width:28px; height:28px; border-radius:50%; background:var(--ssb-yolk) !important; border:4px solid #ffffff !important; box-shadow:0 1px 4px rgba(0,0,0,0.35); cursor:pointer; }
-#mod-settings-section .mod-slider::-moz-range-thumb { width:28px; height:28px; border-radius:50%; background:var(--ssb-yolk) !important; border:4px solid #ffffff !important; box-shadow:0 1px 4px rgba(0,0,0,0.35); cursor:pointer; }
-#mod-settings-section .mod-num-input { width:100px; padding:8px 12px; border:none !important; border-radius:10px; background:#ffffff !important; color:var(--ssb-ink) !important; font-family:"Nunito", system-ui, sans-serif !important; font-size: 18px; font-weight: 700; text-align:center; outline:none; transition:border-color 0.15s,background 0.15s; -moz-appearance:textfield; }
-#mod-settings-section .mod-num-input::-webkit-outer-spin-button, #mod-settings-section .mod-num-input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
-#mod-settings-section .mod-num-input:focus { border:none !important; }
+n.textContent = `
 .mod-tab-active .settings-content { display:none !important; }
 .mod-tab-active #settings_keyboard, .mod-tab-active #settings_controller, .mod-tab-active #settings_misc { display:none !important; }
 
@@ -2562,8 +2228,6 @@ background:var(--pm-glass) !important; box-shadow:inset 0 1px 0 rgba(255,255,255
 #popupInnards > #mod-crosshair-section .ch2-right-col { margin-left:0; padding-left:0 !important; padding-right:0 !important; }
 #popupInnards > #mod-crosshair-section .ch2-preview-wrap { flex:none; height:160px !important; }
 }
-#mod-settings-section .mod-search-empty { padding:30px 10px 10px; text-align:center; font-size:17px; font-weight:800; color:var(--ssb-ink); }
-#mod-settings-section .mod-item .ssb-new-pill { margin-left:-8px; }
 #mod-settings-footer { flex-wrap:wrap; gap:10px 14px; }
 #mod-settings-footer .mod-footer-mid { display:inline-flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:8px; }
 /* Update status beside "Check for updates": a quiet pill when current, the orange game button when there's an update. */
@@ -2597,16 +2261,7 @@ background:var(--pm-glass) !important; box-shadow:inset 0 1px 0 rgba(255,255,255
 #mod-settings-footer .mod-footer-update:disabled { cursor:default; }
 #mod-settings-footer .mod-footer-update:disabled svg { animation:ssb-upd-spin 0.8s linear infinite; }
 @keyframes ssb-upd-spin { to { transform:rotate(360deg); } }
-/* NEW-items dot on the MODS / CROSSHAIR tab, until the tab is opened */
 #mod-crosshair-section .ch2-disabled-msg { display:flex; flex-direction:column; align-items:center; gap:var(--ssb-gap); margin-top:15px; padding:22px 18px; border:2px dashed rgba(33,106,128,0.45); border-radius:10px; background:rgba(33,106,128,0.06); color:var(--ssb-muted); font-size:14px; font-weight:700; text-align:center; letter-spacing:0.2px; }
-/* While searching, each match shows its description under its name */
-#mod-settings-section .mod-search-tip { display:none; margin-top:3px; font-size:14px; font-weight:600; line-height:1.3; color:var(--ssb-muted); }
-#mod-settings-section.mod-searching .mod-search-tip { display:block; }
-
-/* Tooltips styling */
-#mod-settings-section [data-tooltip], #mod-settings-section .mod-slider-label[data-tooltip] {
-cursor: default;
-}
 `;
 (document.head || document.documentElement).appendChild(n);
 }
@@ -2626,6 +2281,16 @@ cs.textContent =
       ed.textContent = "Crosshair Mod v" + VERSION;
       let fm = document.createElement("span");
       fm.className = "mod-footer-mid";
+      let dc = document.createElement("a");
+      dc.className = "mod-footer-btn mod-footer-discord";
+      dc.href = window.SSB_DISCORD;
+      dc.target = "_blank";
+      dc.rel = "noopener";
+      dc.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>';
+      dc.setAttribute("aria-label", "Join Discord");
+      dc.setAttribute("data-tooltip", "Join the Discord server: help, news and all the links.");
+      dc.addEventListener("click", () => ef("ui_click"));
+      fm.appendChild(dc);
       let gh = document.createElement("a");
       gh.className = "mod-footer-btn mod-footer-github";
       gh.href = "https://github.com/Virojet/Shell-Shockers-Crosshair-Mod";
@@ -2637,7 +2302,7 @@ cs.textContent =
       gh.addEventListener("click", () => ef("ui_click"));
       fm.appendChild(gh);
       let ec = document.createElement("a");
-      ec.href = "https://www.youtube.com/@subtovirojet?sub_confirmation=1";
+      ec.href = window.SSB_YOUTUBE;
       ec.target = "_blank";
       ec.textContent = "Created by Virojet";
       ec.style.cssText = "color: #ff9800; text-decoration: none; transition: color 0.15s; font-family: 'Nunito', system-ui, sans-serif;";
@@ -2668,8 +2333,7 @@ o.appendChild(n);
 let i = document.createElement("div");
 i.className = "ch2-control-right";
 t.forEach(e => i.appendChild(e));
-o
-.appendChild(i);
+o.appendChild(i);
 return o;
 },
 n = (e, t, n) => {
@@ -2692,8 +2356,7 @@ i.addEventListener("change", () => ef(
 a.addEventListener("input", () => {
 if (/^#[0-9a-f]{6}$/i.test(a.value)) {
 i.value = a.value;
-n[t] = a
-.value;
+n[t] = a.value;
 F(t, n[t]);
 G();
 Y();
@@ -2709,16 +2372,14 @@ r.min = n;
 r.max = i;
 r.step = a;
 r.value = o[t];
-r
-.className = "ch2-slider";
+r.className = "ch2-slider";
 let s = document.createElement("input");
 s.type = "number";
 s.min = n;
 s.max = i;
 s.step = a;
 s.value = o[t];
-s
-.className = "ch2-num";
+s.className = "ch2-num";
 r.addEventListener("input", () => {
 o[t] = parseFloat(r.value);
 s.value = o[t];
@@ -2729,8 +2390,7 @@ let l = () => {
 let e = parseFloat(s.value);
 if (!isNaN(e)) {
 e = Math.max(parseFloat(n), Math.min(parseFloat(i), e));
-s
-.value = e;
+s.value = e;
 r.value = e;
 o[t] = e;
 F(t, o[t]);
@@ -2757,8 +2417,7 @@ let p = document.createElement("span");
 p.className = "ch2-label";
 p.textContent = e;
 c.appendChild(p);
-c
-.appendChild(s);
+c.appendChild(s);
 d.appendChild(c);
 d.appendChild(r);
 return d;
@@ -2775,8 +2434,7 @@ let s = document.createElement("span");
 s.className = "ch2-check-text";
 s.textContent = e;
 i.appendChild(a);
-i
-.appendChild(r);
+i.appendChild(r);
 i.appendChild(s);
 a.addEventListener("change", () => {
 o[t] = a.checked;
@@ -2806,13 +2464,11 @@ previewCard.appendChild(previewWrap);
 let c = document.createElement("input");
 c.type = "color";
 c.value = localStorage.getItem("ch2-previewBg") || "#ffffff";
-c
-.className = "ch2-color";
+c.className = "ch2-color";
 let p = document.createElement("input");
 p.type = "text";
 p.value = localStorage.getItem("ch2-previewBg") || "#ffffff";
-p
-.className = "ch2-hex";
+p.className = "ch2-hex";
 let m = () => {
 localStorage.setItem("ch2-previewBg", c.value);
 p.value = c.value;
@@ -2833,8 +2489,6 @@ previewCard.appendChild(h);
 d.appendChild(previewCard);
 let bgSw = document.createElement("div");
 bgSw.className = "ch2-bg-swatches";
-if (window.__ssbSettings?.NEW_SINCE === "5.1") bgSw.appendChild(window.__ssbSettings
-.newPill());
 [
 ["#87ceeb", "Sky"],
 ["#808080", "Grey"],
@@ -2845,8 +2499,7 @@ let b = document.createElement("button");
 b.type = "button";
 b.className = "ch2-bg-swatch";
 b.dataset.hex = hex;
-b
-.style.background = hex;
+b.style.background = hex;
 b.setAttribute("data-tooltip", nm +
 " background");
 b.setAttribute("aria-label", nm + " background");
@@ -2917,14 +2570,12 @@ more.type = "button";
 more.className = "ch2-mini-more";
 more.textContent = "+" +
 left;
-more.setAttribute("data-tooltip", "Open the gallery to see all " + names
-.length + " profiles");
+more.setAttribute("data-tooltip", "Open the gallery to see all " + names.length + " profiles");
 more.setAttribute("aria-label", left +
 " more profiles. Open the gallery");
 more.addEventListener("click", () => {
 if (typeof ef == "function") ef("ui_click");
-if (window
-._ssbToggleGallery) window._ssbToggleGallery(true);
+if (window._ssbToggleGallery) window._ssbToggleGallery(true);
 });
 mini.appendChild(more);
 }
@@ -2982,8 +2633,7 @@ x.setAttribute("data-count", t.length);
 renderMini();
 if (window._ssbUpdateGallery) {
 if (window._ssbGalleryActive) window._ssbUpdateGallery(e, t, y.value);
-else window
-._ssbGalleryDirty = true;
+else window._ssbGalleryDirty = true;
 }
 }
 E();
@@ -3134,8 +2784,7 @@ type: "error"
 return
 }
 let o = await nameDlg("Name Profile", (_ssbIsValorantCode(e) ?
-"Valorant_" : "Imported_") + Math.floor(1e3 * Math
-.random()));
+"Valorant_" : "Imported_") + Math.floor(1e3 * Math.random()));
 if (!o) return;
 let n = N();
 n[o] = Object.assign(t, {
@@ -3145,8 +2794,7 @@ M(n);
 E();
 if (typeof ef == "function") ef("ui_click");
 UI.toast(
-"Imported profile \"" + o + "\"." + (t.__notes && t.__notes
-.length ? "\n" + t.__notes.join("\n") : ""), {
+"Imported profile \"" + o + "\"." + (t.__notes && t.__notes.length ? "\n" + t.__notes.join("\n") : ""), {
 type: "success",
 ms: t.__notes && t.__notes.length ? 7000 : 0
 });
@@ -3190,8 +2838,7 @@ let gb = document.createElement("button");
 gb.type = "button";
 gb.className = "ch2-profile-btn";
 gb.textContent = "Turn it on";
-gb
-.addEventListener("click", () => {
+gb.addEventListener("click", () => {
 let cb = b.querySelector("input");
 cb.checked = true;
 cb.dispatchEvent(new Event("change"));
@@ -3207,12 +2854,10 @@ if (window._ssbGalleryActive) return;
 if (A.enabled) {
 f.style.display = "";
 g.style.display = "none";
-if (rb) rb
-.style.removeProperty("display");
+if (rb) rb.style.removeProperty("display");
 } else {
 f.style.display = "none";
-g
-.style.display = "";
+g.style.display = "";
 if (rb) rb.style.setProperty("display",
 "none", "important");
 }
@@ -3258,8 +2903,7 @@ E();
 }
 let dragName = null,
 clearDrop = () => galGrid.querySelectorAll(
-".ch2-drop-before,.ch2-drop-after,.ch2-dragging").forEach(c => c.classList
-.remove("ch2-drop-before", "ch2-drop-after", "ch2-dragging")),
+".ch2-drop-before,.ch2-drop-after,.ch2-dragging").forEach(c => c.classList.remove("ch2-drop-before", "ch2-drop-after", "ch2-dragging")),
 dropSide = (c, ev) => {
 let r = c.getBoundingClientRect();
 return ev.clientX > r.left + r.width / 2
@@ -3269,8 +2913,7 @@ let c = ev.target.closest && ev.target.closest(".ch2-gallery-card");
 if (!c) return;
 dragName = c.getAttribute("data-name");
 c.classList.add("ch2-dragging");
-ev
-.dataTransfer.effectAllowed = "move";
+ev.dataTransfer.effectAllowed = "move";
 try {
 ev.dataTransfer.setData("text/plain", dragName)
 } catch (err) {
@@ -3303,8 +2946,7 @@ clearDrop();
 if (c && c.getAttribute("data-name") !== n) moveProfile(n, c.getAttribute(
 "data-name"), dropSide(c, ev));
 else {
-if (!c && ev.target.closest && ev
-.target.closest(".ch2-gallery-new-card")) moveProfile(n, null,
+if (!c && ev.target.closest && ev.target.closest(".ch2-gallery-new-card")) moveProfile(n, null,
 true);
 }
 });
@@ -3382,8 +3024,7 @@ actions.className = "ch2-gallery-actions";
 let aExp = document.createElement("button");
 aExp.className = "ch2-gallery-abtn";
 aExp.setAttribute("data-tooltip", "Copy this profile's code");
-aExp
-.setAttribute("aria-label", "Copy the code for " + name);
+aExp.setAttribute("aria-label", "Copy the code for " + name);
 aExp.innerHTML =
 '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 1l6.2 6.8a.6.6 0 0 1-.44 1H14.5V15a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V8.8H6.24a.6.6 0 0 1-.44-1L12 1z"/><path d="M3 14.5h3v3.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-3.5h3V19a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-4.5z"/></svg>';
 aExp.addEventListener("click", ev => {
@@ -3401,8 +3042,7 @@ UI.copyCode(packCrosshair(prof), "Crosshair code");
 let aDel = document.createElement("button");
 aDel.className = "ch2-gallery-abtn danger";
 aDel.setAttribute("data-tooltip", "Delete profile");
-aDel
-.setAttribute("aria-label", "Delete " + name);
+aDel.setAttribute("aria-label", "Delete " + name);
 aDel.innerHTML =
 '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M9.3 1.5h5.4a1 1 0 0 1 .9.55L16.4 3.5H20a1.2 1.2 0 0 1 0 2.4H4a1.2 1.2 0 0 1 0-2.4h3.6l.8-1.45a1 1 0 0 1 .9-.55z"/><path d="M5 7.5h14l-1.1 12.4a2.5 2.5 0 0 1-2.5 2.3H8.6a2.5 2.5 0 0 1-2.5-2.3L5 7.5z"/></svg>';
 aDel.addEventListener("click", async ev => {
@@ -3431,8 +3071,7 @@ card.setAttribute("data-name", name);
 card.addEventListener("keydown", ev => {
 if (!ev.altKey || ev.target !== card) return;
 let d = ev.key === "ArrowLeft" || ev.key === "ArrowUp" ?
--1 : ev.key === "ArrowRight" || ev
-.key === "ArrowDown" ? 1 : 0;
+-1 : ev.key === "ArrowRight" || ev.key === "ArrowDown" ? 1 : 0;
 if (!d) return;
 ev.preventDefault();
 let r = PO(),
@@ -3451,14 +3090,12 @@ y.dispatchEvent(new Event("change"));
 });
 card.tabIndex = 0;
 card.setAttribute("role", "button");
-card
-.setAttribute("aria-label", "Use profile " + name + (name ===
+card.setAttribute("aria-label", "Use profile " + name + (name ===
 activeVal ? " (current)" : "") +
 ". Alt plus arrow keys move it.");
 card.addEventListener(
 "keydown", ev => {
-if (ev.target === card && (ev.key === "Enter" || ev
-.key === " ")) {
+if (ev.target === card && (ev.key === "Enter" || ev.key === " ")) {
 ev.preventDefault();
 card.click();
 }
@@ -3471,8 +3108,7 @@ newCard.innerHTML =
 '<div class="ch2-gallery-new-plus"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"><line x1="12" y1="4" x2="12" y2="20"/><line x1="4" y1="12" x2="20" y2="12"/></svg></div><div class="ch2-gallery-new-label">Create new</div>';
 newCard.setAttribute("data-tooltip",
 "Create a new profile with default crosshair settings");
-newCard
-.tabIndex = 0;
+newCard.tabIndex = 0;
 newCard.setAttribute("role", "button");
 newCard.setAttribute(
 "aria-label", "Create a new profile");
@@ -3521,8 +3157,7 @@ armsBody.className = "ch2-collapse-body";
 let _fold = (body, hide) => {
 body.style.maxHeight = body.scrollHeight + "px";
 void body.offsetHeight;
-body
-.classList.toggle("collapsed", hide);
+body.classList.toggle("collapsed", hide);
 clearTimeout(body.__ssbFold);
 if (!hide) body.__ssbFold = setTimeout(() => {
 if (!body.classList.contains("collapsed")) body.style.maxHeight =
@@ -3575,10 +3210,8 @@ let U = {};
 ["dot", "plus", "still"].forEach(e => {
 let t = document.createElement("button");
 t.className = "ch2-shape-btn" + (A.dotShape === e ? " active" : "");
-t
-.textContent = e.charAt(0).toUpperCase() + e.slice(1);
-t
-.addEventListener("click", () => {
+t.textContent = e.charAt(0).toUpperCase() + e.slice(1);
+t.addEventListener("click", () => {
 A.dotShape = e;
 F("dotShape", e);
 Object.values(U).forEach(e =>
@@ -3586,10 +3219,8 @@ e.classList.remove("active"));
 t.classList.add(
 "active");
 X.style.display = e === "dot" ? "" : "none";
-J
-.style.display = e === "plus" ? "" : "none";
-Q.style
-.display = e === "still" ? "" : "none";
+J.style.display = e === "plus" ? "" : "none";
+Q.style.display = e === "still" ? "" : "none";
 V.style.display =
 e === "still" ? "none" : "";
 Z.style.display = e === "still" ? "none" : "";
@@ -3684,8 +3315,7 @@ chTools = document.createElement("div"),
 chRow = document.createElement("div");
 chTools.className = "ch2-prof-tools";
 chRow.className = "ch2-hist-row";
-chBar
-.replaceWith(chTools);
+chBar.replaceWith(chTools);
 chTools.appendChild(chBar);
 chTools.appendChild(chRow);
 let chSvg = p =>
@@ -3712,8 +3342,7 @@ b.setAttribute("aria-label", name);
 b.setAttribute("data-tooltip",
 tip);
 b.innerHTML = chIcons[act] + "<span>" + label + "</span>";
-b
-.addEventListener("click", () => {
+b.addEventListener("click", () => {
 if (run()) ef("ui_click");
 });
 chRow.appendChild(b);
@@ -3721,11 +3350,9 @@ return b
 };
 let chU = chBtn("undo", "Undo", "Undo", "Undo your last crosshair change (Ctrl+Z).",
 () => chH.undo()),
-chR = chBtn("redo", "Redo", "Redo", "Redo the change you undid (Ctrl+Y).", () => chH
-.redo()),
+chR = chBtn("redo", "Redo", "Redo", "Redo the change you undid (Ctrl+Y).", () => chH.redo()),
 chV = chBtn("revert", "Revert", "Revert to Saved",
-"Revert to Saved: put this profile back the way you last saved it.", () => chH
-.revert());
+"Revert to Saved: put this profile back the way you last saved it.", () => chH.revert());
 let chPaint = () => {
 chU.disabled = !chH.canUndo();
 chR.disabled = !chH.canRedo();
@@ -3759,8 +3386,7 @@ G();
 }
 });
 if (!A.enabled) et.style.setProperty("display", "none", "important");
-u
-.appendChild(et);
+u.appendChild(et);
 l.appendChild(u);
 t.appendChild(l);
 $();
@@ -3858,6 +3484,7 @@ setTimeout(V, 500);
           e.style.flex = "1";
           if (e.__ssbNativeTabClick) e.removeEventListener("click", e.__ssbNativeTabClick);
           e.__ssbNativeTabClick = () => {
+            if (em.classList.contains("mod-tab-active") && e.classList.contains(e$ || "active")) ef("ui_toggletab");
             ev();
             localStorage.setItem("ch2-lastTab", "native");
           };
@@ -3915,68 +3542,24 @@ setTimeout(V, 500);
     return true;
   }
 
-  if (!document.getElementById('harmonized-ui-overrides')) {
-const style = document.createElement('style');
-style.id = 'harmonized-ui-overrides';
-style.textContent = `/* Remove canvas focus outline (white ring on play) */
+  if (!document.getElementById('harmonized-ui-overrides')) { const style = document.createElement('style'); style.id = 'harmonized-ui-overrides'; style.textContent = `/* Remove canvas focus outline (white ring on play) */
 #canvas, #canvas:focus, #canvas:focus-visible { outline: none !important; -webkit-tap-highlight-color: transparent !important; }
 /* Fix Manage-section button heights */
 /* Force the blue (ch2-profile-btn) and red (ch2-reset-btn) buttons to match */
 #mod-settings-section .ch2-profile-btn,
 #mod-settings-section .ch2-reset-btn,
-.ch2-profile-btn, .ch2-reset-btn {
-height: 40px !important;
-font-size: 14px !important;
-box-sizing: border-box !important;
-display: inline-flex !important;
-align-items: center !important;
-justify-content: center !important;
-}
+.ch2-profile-btn, .ch2-reset-btn { height: 40px !important; font-size: 14px !important; box-sizing: border-box !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
 
-#mod-crosshair-section .ch2-preview-col {
-gap: 0px !important;
-overflow-y: auto !important;
-scrollbar-width: none !important; /* Hide scrollbar for a clean look */
-flex: 0 0 calc(40% - 15px) !important;
-}
-#mod-crosshair-section .ch2-right-col {
-overflow-y: auto !important;
-padding-bottom: 40px !important;
-flex: 0 0 calc(60% - 15px) !important;
-}
-#mod-crosshair-section .ch2-preview-col .ch2-group-card {
-padding: 6px 10px !important;
-margin-bottom: 6px !important;
-}
-#mod-crosshair-section .ch2-preview-col .ch2-card-title {
-font-size: 13px !important;
-margin-bottom: 4px !important;
-}
-#mod-crosshair-section .ch2-preview-wrap {
-height: 160px !important;
-margin-bottom: 4px !important;
-}
-#mod-crosshair-section .ch2-preview-col .ch2-control-row {
-margin-bottom: 0px !important;
-gap: 8px !important;
-}
-#mod-crosshair-section .ch2-preview-col .ch2-color {
-width: 38px !important;
-height: 24px !important;
-border-radius: 5px !important;
-}
-#mod-crosshair-section .ch2-preview-col .ch2-hex {
-width: 68px !important;
-height: 24px !important;
-font-size: 12px !important;
-padding: 0 4px !important;
-border-width: 1.5px !important;
-border-radius: 5px !important;
-}
-#mod-crosshair-section .ch2-preview-col .ch2-icon-bar {
-margin-top: 6px !important;
-margin-bottom: 0px !important;
-}
+#mod-crosshair-section .ch2-preview-col { gap: 0px !important; overflow-y: auto !important; scrollbar-width: none !important; /* Hide scrollbar for a clean look */
+flex: 0 0 calc(40% - 15px) !important; }
+#mod-crosshair-section .ch2-right-col { overflow-y: auto !important; padding-bottom: 40px !important; flex: 0 0 calc(60% - 15px) !important; }
+#mod-crosshair-section .ch2-preview-col .ch2-group-card { padding: 6px 10px !important; margin-bottom: 6px !important; }
+#mod-crosshair-section .ch2-preview-col .ch2-card-title { font-size: 13px !important; margin-bottom: 4px !important; }
+#mod-crosshair-section .ch2-preview-wrap { height: 160px !important; margin-bottom: 4px !important; }
+#mod-crosshair-section .ch2-preview-col .ch2-control-row { margin-bottom: 0px !important; gap: 8px !important; }
+#mod-crosshair-section .ch2-preview-col .ch2-color { width: 38px !important; height: 24px !important; border-radius: 5px !important; }
+#mod-crosshair-section .ch2-preview-col .ch2-hex { width: 68px !important; height: 24px !important; font-size: 12px !important; padding: 0 4px !important; border-width: 1.5px !important; border-radius: 5px !important; }
+#mod-crosshair-section .ch2-preview-col .ch2-icon-bar { margin-top: 6px !important; margin-bottom: 0px !important; }
 
 /* GALLERY button in the crosshair Profiles card */
 #ch2-open-gallery-btn { height:51px !important; width:100% !important; margin:0 !important; padding:0 10px !important; border:none !important; border-radius:6px !important; outline:none !important; background:var(--ssb-yolk) !important; box-shadow:0 3px 0 var(--ssb-yolk-shadow) !important; color:#fff !important; font-family:"Nunito",system-ui,sans-serif !important; font-size:14px !important; font-weight:800 !important; letter-spacing:0.3px !important; text-transform:uppercase !important; white-space:nowrap !important; text-shadow:0 1px 2px rgba(0,0,0,0.3) !important; cursor:pointer !important; transition:all 0.1s !important; display:flex !important; align-items:center !important; justify-content:center !important; flex-direction:column !important; gap:2px !important; box-sizing:border-box !important; }
@@ -4009,548 +3592,181 @@ big at 1440p/100% as at 720p or 200% scaling. Only elements without their own fo
 .ch2-gallery-card.ch2-drop-after { box-shadow:5px 0 0 var(--ssb-yolk), 0 4px 0 var(--ssb-card-shadow) !important; }
 
 /* Gallery Styles */
-.ch2-gallery-grid {
-display: grid !important;
-grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
-gap: 16px !important;
-padding: 12px 0 !important;
-}
-.ch2-gallery-card {
-background: var(--ssb-card) !important;
-border: 2px solid transparent !important;
-border-radius: 10px !important;
-box-shadow: 0 4px 0 var(--ssb-card-shadow) !important;
-padding: 12px !important;
-cursor: pointer !important;
-transition: all 0.15s ease-in-out !important;
-display: flex !important;
-flex-direction: column !important;
-align-items: center !important;
-gap: 10px !important;
-}
-.ch2-gallery-card:hover {
-background: var(--ssb-card-hi) !important;
-box-shadow: 0 4px 0 var(--ssb-card-shadow-hi) !important;
-transform: translateY(-2px) !important;
-}
-.ch2-gallery-card:active {
-transform: translateY(2px) !important;
-box-shadow: 0 1px 0 var(--ssb-card-shadow) !important;
-}
-.ch2-gallery-card {
-position: relative !important;
-overflow: visible !important;
-}
-.ch2-gallery-card.selected {
-background: var(--ssb-card) !important;
-border: 2.5px solid #ffc900 !important;
-box-shadow: 0 4px 0 var(--ssb-card-shadow) !important;
-}
-.ch2-gallery-card.selected:hover {
-background: var(--ssb-card-hi) !important;
-box-shadow: 0 4px 0 var(--ssb-card-shadow-hi) !important;
-transform: translateY(-2px) !important;
-}
-.ch2-gallery-card.selected:active {
-transform: translateY(2px) !important;
-box-shadow: 0 1px 0 var(--ssb-card-shadow) !important;
-}
-.ch2-gallery-card.selected .ch2-gallery-title {
-color: #cf9700 !important;
-}
-.ch2-gallery-badge {
-position: absolute !important;
-top: -9px !important;
-right: -9px !important;
-width: 24px !important;
-height: 24px !important;
-border-radius: 50% !important;
-background: #ffc900 !important;
-box-shadow: 0 2px 0 #d3a000 !important;
-display: flex !important;
-align-items: center !important;
-justify-content: center !important;
-z-index: 6 !important;
-pointer-events: none !important;
-}
-.ch2-gallery-actions {
-position: absolute !important;
-top: 16px !important;
-right: 16px !important;
-display: flex !important;
-gap: 4px !important;
-opacity: 0 !important;
-transition: opacity 0.12s ease !important;
-z-index: 5 !important;
-}
+.ch2-gallery-grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; gap: 16px !important; padding: 12px 0 !important; }
+.ch2-gallery-card { background: var(--ssb-card) !important; border: 2px solid transparent !important; border-radius: 10px !important; box-shadow: 0 4px 0 var(--ssb-card-shadow) !important; padding: 12px !important; cursor: pointer !important; transition: all 0.15s ease-in-out !important; display: flex !important; flex-direction: column !important; align-items: center !important; gap: 10px !important; }
+.ch2-gallery-card:hover { background: var(--ssb-card-hi) !important; box-shadow: 0 4px 0 var(--ssb-card-shadow-hi) !important; transform: translateY(-2px) !important; }
+.ch2-gallery-card:active { transform: translateY(2px) !important; box-shadow: 0 1px 0 var(--ssb-card-shadow) !important; }
+.ch2-gallery-card { position: relative !important; overflow: visible !important; }
+.ch2-gallery-card.selected { background: var(--ssb-card) !important; border: 2.5px solid #ffc900 !important; box-shadow: 0 4px 0 var(--ssb-card-shadow) !important; }
+.ch2-gallery-card.selected:hover { background: var(--ssb-card-hi) !important; box-shadow: 0 4px 0 var(--ssb-card-shadow-hi) !important; transform: translateY(-2px) !important; }
+.ch2-gallery-card.selected:active { transform: translateY(2px) !important; box-shadow: 0 1px 0 var(--ssb-card-shadow) !important; }
+.ch2-gallery-card.selected .ch2-gallery-title { color: #cf9700 !important; }
+.ch2-gallery-badge { position: absolute !important; top: -9px !important; right: -9px !important; width: 24px !important; height: 24px !important; border-radius: 50% !important; background: #ffc900 !important; box-shadow: 0 2px 0 #d3a000 !important; display: flex !important; align-items: center !important; justify-content: center !important; z-index: 6 !important; pointer-events: none !important; }
+.ch2-gallery-actions { position: absolute !important; top: 16px !important; right: 16px !important; display: flex !important; gap: 4px !important; opacity: 0 !important; transition: opacity 0.12s ease !important; z-index: 5 !important; }
 .ch2-gallery-card:hover .ch2-gallery-actions,
-.ch2-gallery-card:focus-within .ch2-gallery-actions {
-opacity: 1 !important;
-}
-@media (hover: none) {
-.ch2-gallery-actions { opacity: 1 !important; }
-}
-.ch2-gallery-card:focus-visible, .ch2-gallery-new-card:focus-visible {
-outline: 3px solid var(--ssb-focus) !important;
-outline-offset: 2px !important;
-}
-.ch2-gallery-abtn {
-width: 24px !important;
-height: 24px !important;
-border: none !important;
-border-radius: 6px !important;
-background: var(--ssb-blue) !important;
-box-shadow: 0 2px 0 var(--ssb-ink) !important;
-color: #ffffff !important;
-cursor: pointer !important;
-display: inline-flex !important;
-align-items: center !important;
-justify-content: center !important;
-padding: 0 !important;
-transition: all 0.1s ease !important;
-}
-.ch2-gallery-abtn:hover {
-background: var(--ssb-blue-hi) !important;
-transform: translateY(-1px) !important;
-}
-.ch2-gallery-abtn.danger {
-background: var(--ssb-red) !important;
-box-shadow: 0 2px 0 var(--ssb-red-shadow) !important;
-}
-.ch2-gallery-abtn.danger:hover {
-background: var(--ssb-red-hi) !important;
-}
+.ch2-gallery-card:focus-within .ch2-gallery-actions { opacity: 1 !important; }
+@media (hover: none) { .ch2-gallery-actions { opacity: 1 !important; } }
+.ch2-gallery-card:focus-visible, .ch2-gallery-new-card:focus-visible { outline: 3px solid var(--ssb-focus) !important; outline-offset: 2px !important; }
+.ch2-gallery-abtn { width: 24px !important; height: 24px !important; border: none !important; border-radius: 6px !important; background: var(--ssb-blue) !important; box-shadow: 0 2px 0 var(--ssb-ink) !important; color: #ffffff !important; cursor: pointer !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; transition: all 0.1s ease !important; }
+.ch2-gallery-abtn:hover { background: var(--ssb-blue-hi) !important; transform: translateY(-1px) !important; }
+.ch2-gallery-abtn.danger { background: var(--ssb-red) !important; box-shadow: 0 2px 0 var(--ssb-red-shadow) !important; }
+.ch2-gallery-abtn.danger:hover { background: var(--ssb-red-hi) !important; }
 .ch2-gallery-abtn svg { pointer-events: none !important; }
-.ch2-gallery-new-card {
-background: rgba(255,255,255,0.18) !important;
-border: 2.5px dashed var(--ssb-blue) !important;
-border-radius: 10px !important;
-cursor: pointer !important;
-display: flex !important;
-flex-direction: column !important;
-align-items: center !important;
-justify-content: center !important;
-gap: 10px !important;
-min-height: 150px !important;
-transition: all 0.15s ease !important;
-box-sizing: border-box !important;
-}
-.ch2-gallery-new-card:hover {
-background: rgba(255,255,255,0.32) !important;
-transform: translateY(-2px) !important;
-}
-.ch2-gallery-new-plus {
-width: 42px !important;
-height: 42px !important;
-border-radius: 50% !important;
-background: var(--ssb-yolk) !important;
-box-shadow: 0 3px 0 var(--ssb-yolk-shadow) !important;
-display: flex !important;
-align-items: center !important;
-justify-content: center !important;
-}
-.ch2-gallery-new-label {
-color: var(--ssb-ink) !important;
-font-size: 11px !important;
-font-weight: 900 !important;
-text-transform: uppercase !important;
-text-align: center !important;
-letter-spacing: 0.5px !important;
-}
-.ch2-gallery-mini-preview {
-width: 100% !important;
-height: 110px !important;
-background: #87ceeb !important;
-border-radius: 6px !important;
-border: none !important;
-position: relative !important;
-overflow: hidden !important;
-box-sizing: border-box !important;
-}
-.ch2-gallery-title {
-color: var(--ssb-ink) !important;
-font-size: 13.5px !important;
-font-weight: 900 !important;
-text-transform: uppercase !important;
-text-align: center !important;
-letter-spacing: 0.5px !important;
-text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important;
-width: 100% !important;
-white-space: nowrap !important;
-overflow: hidden !important;
-text-overflow: ellipsis !important;
-}
-.ch2-gallery-header {
-display: flex !important;
-align-items: center !important;
-justify-content: space-between !important;
-margin-bottom: 15px !important;
-padding-bottom: 10px !important;
-border-bottom: 2px solid rgba(33,106,128,0.15) !important;
-}
-.ch2-gallery-back-btn {
-background: var(--ssb-blue) !important;
-border: none !important;
-outline: none !important;
-box-shadow: 0 3.5px 0 var(--ssb-ink) !important;
-color: #ffffff !important;
-border-radius: 8px !important;
-padding: 6px 14px !important;
-font-size: 13px !important;
-font-weight: 800 !important;
-cursor: pointer !important;
-transition: all 0.1s !important;
-}
-.ch2-gallery-back-btn:hover {
-background: var(--ssb-blue-hi) !important;
-box-shadow: 0 3.5px 0 var(--ssb-blue-shadow) !important;
-}
-.ch2-gallery-back-btn:active {
-transform: translateY(2px) !important;
-box-shadow: 0 1px 0 var(--ssb-ink) !important;
-}
-
-/* Force volume slider display and sizes */
-#mod-volDisplay {
-font-size: 16px !important;
-font-weight: bold !important;
-}
-.mod-vol-slider {
-height: 6px !important;
-background: #ffffff !important;
-}
-.mod-vol-slider::-webkit-slider-thumb {
-width: 21px !important;
-height: 21px !important;
-margin-top: -8px !important;
-background: var(--ssb-yolk) !important;
-border: 4.5px solid #fff !important;
-box-sizing: border-box !important;
-}
-.mod-vol-slider::-moz-range-thumb {
-width: 21px !important;
-height: 21px !important;
-background: var(--ssb-yolk) !important;
-border: 4.5px solid #fff !important;
-box-sizing: border-box !important;
-}
-
+.ch2-gallery-new-card { background: rgba(255,255,255,0.18) !important; border: 2.5px dashed var(--ssb-blue) !important; border-radius: 10px !important; cursor: pointer !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 10px !important; min-height: 150px !important; transition: all 0.15s ease !important; box-sizing: border-box !important; }
+.ch2-gallery-new-card:hover { background: rgba(255,255,255,0.32) !important; transform: translateY(-2px) !important; }
+.ch2-gallery-new-plus { width: 42px !important; height: 42px !important; border-radius: 50% !important; background: var(--ssb-yolk) !important; box-shadow: 0 3px 0 var(--ssb-yolk-shadow) !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+.ch2-gallery-new-label { color: var(--ssb-ink) !important; font-size: 11px !important; font-weight: 900 !important; text-transform: uppercase !important; text-align: center !important; letter-spacing: 0.5px !important; }
+.ch2-gallery-mini-preview { width: 100% !important; height: 110px !important; background: #87ceeb !important; border-radius: 6px !important; border: none !important; position: relative !important; overflow: hidden !important; box-sizing: border-box !important; }
+.ch2-gallery-title { color: var(--ssb-ink) !important; font-size: 13.5px !important; font-weight: 900 !important; text-transform: uppercase !important; text-align: center !important; letter-spacing: 0.5px !important; text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5) !important; width: 100% !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+.ch2-gallery-header { display: flex !important; align-items: center !important; justify-content: space-between !important; margin-bottom: 15px !important; padding-bottom: 10px !important; border-bottom: 2px solid rgba(33,106,128,0.15) !important; }
+.ch2-gallery-back-btn { background: var(--ssb-blue) !important; border: none !important; outline: none !important; box-shadow: 0 3.5px 0 var(--ssb-ink) !important; color: #ffffff !important; border-radius: 8px !important; padding: 6px 14px !important; font-size: 13px !important; font-weight: 800 !important; cursor: pointer !important; transition: all 0.1s !important; }
+.ch2-gallery-back-btn:hover { background: var(--ssb-blue-hi) !important; box-shadow: 0 3.5px 0 var(--ssb-blue-shadow) !important; }
+.ch2-gallery-back-btn:active { transform: translateY(2px) !important; box-shadow: 0 1px 0 var(--ssb-ink) !important; }
 /* Make the slider dot bigger */
-.mod-slider::-webkit-slider-thumb, .ch2-slider::-webkit-slider-thumb {
-width: 21px !important;
-height: 21px !important;
-border: 4.5px solid #ffffff !important;
-margin-top: -7px !important; /* Center the larger dot */
-}
-.mod-slider::-moz-range-thumb, .ch2-slider::-moz-range-thumb {
-width: 21px !important;
-height: 21px !important;
-border: 4.5px solid #ffffff !important;
-}
+.mod-slider::-webkit-slider-thumb, .ch2-slider::-webkit-slider-thumb { width: 21px !important; height: 21px !important; border: 4.5px solid #ffffff !important; margin-top: -7px !important; /* Center the larger dot */ }
+.mod-slider::-moz-range-thumb, .ch2-slider::-moz-range-thumb { width: 21px !important; height: 21px !important; border: 4.5px solid #ffffff !important; }
 
 /* Keep track height thin */
-.ch2-slider {
-height: 6px !important;
-}
+.ch2-slider { height: 6px !important; }
 
 .ch2-label { font-size: 14px !important; }
-.ch2-num, .ch2-hex {
-height: 30px !important;
-font-size: 14px !important;
-padding: 0 8px !important;
-border: 2px solid var(--ssb-blue) !important;
-border-radius: 6px !important;
-}
+.ch2-num, .ch2-hex { height: 30px !important; font-size: 14px !important; padding: 0 8px !important; border: 2px solid var(--ssb-blue) !important; border-radius: 6px !important; }
 .ch2-num { width: 60px !important; }
 .ch2-hex { width: 80px !important; }
-`;
-(document.head || document.documentElement).appendChild(style);
-}
+`; (document.head || document.documentElement).appendChild(style); }
   (function() {
-"use strict";
-const REF_BASE_PX = 21.06;
-const VAR_NAME = "--ssb-ui-scale";
-const STYLE_ID = "ssb-ui-scale-style";
-const GUI_STYLE_ID = "ssb-gui-scale-style";
-const GUI_VAR = "--ssb-gui";
-const CH_VAR = "--ssb-ch-scale";
-let _guiNow = null;
-function guiValue() {
-let g = 1;
-try {
-g = +window.__ssbGuiScale();
-} catch (e) {
-window.__ssbErr("uiscale#5", e)
-}
-return g >= 0.4 && g <= 1.2 ? g : 1;
-}
-function applyGui() {
-const g = guiValue();
-if (g === _guiNow) return g;
-_guNowSet(g);
-return g;
-}
-function _guNowSet(g) {
-_guiNow = g;
-let el = document.getElementById(GUI_STYLE_ID);
-const root = document.documentElement;
-if (g === 1) {
-if (el) el.remove();
-if (root) root.style.removeProperty(GUI_VAR);
-return;
-}
-if (!el) {
-el = document.createElement("style");
-el.id = GUI_STYLE_ID;
-(document.head || root).appendChild(el);
-}
-el.textContent =
-"html, html *:where(:not(#reticleContainer):not(#reticleContainer *):not(#reticleDot):not(#reticleDot *)) { font-size: calc(1.95 * var(--ssb-vh, 1vh) * var(" +
-GUI_VAR + ", 1)); }\n" +
-"html .teamLetter.red, html .teamLetter.blue { font-size: calc(3 * var(--ssb-vh, 1vh) * var(" +
-GUI_VAR + ", 1)); }";
-if (root) root.style.setProperty(GUI_VAR, String(g));
-}
-applyGui();
-const ROOTS = [
-"#mod-settings-section",
-"#mod-crosshair-section",
-"#ssb-stats-panel",
-"#ssb-pinned-stats",
-".vol-wrap",
-"#ssb-changelog-panel",
-"#ssb-intro-panel",
-".ssb-star",
-"#ssb-dialog-panel",
-"#ssb-toast-stack",
-"#ssb-update-toast",
-"#mod-top-bar",
-"#ssb-global-tooltip",
-];
-function ensureStyle() {
-let el = document.getElementById(STYLE_ID);
-if (!el) {
-el = document.createElement("style");
-el.id = STYLE_ID;
-(document.head || document.documentElement).appendChild(el);
-el.textContent = ROOTS.join(", ") + " { zoom: var(" + VAR_NAME + ", 1); }\n" +
-".vol-wrap, #ssb-pinned-stats { zoom: calc(var(" + VAR_NAME + ", 1) * 0.85); }\n" +
-"#ssb-stats-panel { min-width: min(640px, calc(96vw / var(" + VAR_NAME +
-", 1))) !important; max-width: min(1160px, calc(96vw / var(" + VAR_NAME +
-", 1))) !important; max-height: calc(92vh / var(" + VAR_NAME +
-", 1)) !important; overflow: auto !important; }\n" +
-"#ssb-changelog-panel { max-height: min(760px, calc((100vh - 36px) / var(" + VAR_NAME +
-", 1))); }\n" +
-"#mod-settings-section, #mod-crosshair-section { max-height: calc(min(48vh, 100vh - 330px) / var(" +
-VAR_NAME + ", 1)) !important; }\n" +
-"#popupInnards.mod-tab-active { height: min(calc(25em + var(--ss-space-xl) - var(--ss-space-md)), calc(100vh - 330px)); min-height: 0; margin-bottom: var(--ss-space-md) !important; }\n" +
-"#popupInnards.mod-tab-active > #mod-settings-section { flex: 1 1 0; min-height: 0; max-height: none !important; }\n" +
-"#popupInnards.mod-tab-active { width: min(43.5em, calc(100vw - 6em)) !important; }";
-el.textContent += `
-                #mod-settings-section, #mod-crosshair-section { min-width:0; container-type:inline-size; }
-                #mod-settings-section .mod-item { min-width:0; gap:var(--ssb-gap); position:relative; }
-                #mod-settings-section .mod-label { overflow-wrap:anywhere; min-width:0; }
-                #mod-settings-section .mod-grid { column-gap:24px; }
-                #mod-settings-section .mod-slider-container { flex-wrap:wrap; gap:var(--ssb-gap); }
-                #mod-settings-section .mod-slider-label { min-width:0; }
-                #mod-settings-section .mod-slider-inner-wrap { min-width:120px; }
-                #mod-settings-section input[type=checkbox], #mod-crosshair-section .ch2-check-label input[type=checkbox] { width:1px; height:1px; }
-                #mod-settings-section input:focus-visible ~ .mod-box, #mod-crosshair-section input:focus-visible ~ .ch2-check-box {
-                    outline:3px solid var(--ssb-focus); outline-offset:3px;
-                }
-                :is(#mod-top-bar,#mod-settings-section,#mod-crosshair-section,#ssb-dialog-panel) :is(button,input,select):focus-visible,
-                :is(#mod-settings-tab,#mod-crosshair-tab,.ssb-star):focus-visible { outline:3px solid var(--ssb-focus)!important; outline-offset:2px; }
-                #mod-top-bar { min-width:0; }
-                .ssb-settings-feedback:not(:has(> :not(:empty))) { display:none; }
-                .ssb-settings-feedback { flex-basis:100%; display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px; font-size:12px; font-weight:700; color:var(--ssb-ink); }
-                .ssb-reload-notice { margin-left:auto; }
-                .ssb-reload-pending { background:#fff1c2; color:#653c00; padding:2px 6px; border-radius:4px; }
-                #mod-crosshair-section .ch2-control-row, #mod-crosshair-section .ch2-control-right { flex-wrap:wrap; }
-                #mod-crosshair-section .ch2-label { white-space:normal; }
-                #mod-crosshair-section .ch2-check-label { position:relative; }
-                #ssb-global-tooltip { max-width:min(250px,calc((100vw - 24px) / var(${VAR_NAME}, 1)))!important; box-sizing:border-box; overflow-wrap:anywhere; }
-                @container (max-width:520px) {
-                    #mod-settings-section .mod-grid { grid-template-columns:minmax(0,1fr); }
-                    #mod-crosshair-section .ch2-top { flex-direction:column; gap:16px; }
-                    #mod-crosshair-section .ch2-preview-col { position:static; width:min(100%,300px); align-self:center; flex:none!important; }
-                    #mod-crosshair-section .ch2-right-col { width:100%; }
-                }
-                @media (max-height:800px) {
-                    #mod-top-bar .mod-jump-bar { flex-wrap:nowrap; overflow-x:auto; width:100%; padding-bottom:3px; }
-                    #mod-top-bar .mod-jump-chip { flex-shrink:0; }
-                    #mod-top-bar { gap:6px; padding-block:6px; }
-                }
-                @media (prefers-reduced-motion:reduce) {
-                    :is(#mod-top-bar,#mod-settings-section,#mod-crosshair-section,#ssb-dialog-overlay,#ssb-toast-stack,#ssb-update-toast) *,
-                    #ssb-global-tooltip,.ssb-star { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
-                }
-            `;
-}
-return el;
-}
-const FIT_ROOTS = ["#mod-settings-section", "#mod-crosshair-section"];
-function fitPass(globalScale) {
-const vw = document.documentElement.clientWidth || window.innerWidth;
-const vh = document.documentElement.clientHeight || window.innerHeight;
-const MARGIN = 8;
-for (const sel of FIT_ROOTS) {
-const el = document.querySelector(sel);
-if (!el || !el.offsetParent) continue;
-const parentW = el.parentElement ? el.parentElement.clientWidth : 0;
-const key = globalScale + "|" + vw + "x" + vh + "|" + parentW + "|" + el.scrollHeight + "|" + el
-.childElementCount;
-if (el.__ssbFitKey === key) continue;
-el.__ssbFitKey = key;
-let z = globalScale;
-el.style.zoom = "";
-for (let i = 0; i < 5; i++) {
-const cw = el.clientWidth,
-sw = el.scrollWidth;
-const rect = el.getBoundingClientRect();
-let shrink = 1;
-if (cw && sw > cw) shrink = Math.min(shrink, cw / sw);
-if (rect.width && rect.right > vw - MARGIN) shrink = Math.min(shrink, (vw - MARGIN - rect.left) /
-rect.width);
-if (shrink >= 0.999) break;
-z = Math.max(0.5, Math.round(z * shrink * 0.995 * 1000) / 1000);
-el.style.zoom = String(z);
-}
-if (z >= globalScale - 0.001 && el.style.zoom) el.style.zoom = "";
-const tb = sel === "#mod-settings-section" && document.getElementById("mod-top-bar");
-if (tb) tb.style.zoom = el.style.zoom;
-}
-}
-let _last = 0,
-_lastCh = 0;
-function applyScale() {
-if (document.hidden || document.pointerLockElement) return;
-const gui = applyGui();
-let base = NaN;
-try {
-base = parseFloat(getComputedStyle(document.documentElement).fontSize);
-} catch (e) {
-window.__ssbErr("uiscale#1", e)
-}
-let scale = base > 0 ? base / REF_BASE_PX : (window.innerHeight || 1080) / 1080;
-if (!Number.isFinite(scale) || scale <= 0) scale = 1;
-if (Math.abs(scale - 1) < 0.02) scale = 1;
-scale = Math.round(scale * 1000) / 1000;
-if (scale !== _last) {
-_last = scale;
-try {
-document.documentElement.style.setProperty(VAR_NAME, String(scale));
-} catch (e) {
-window.__ssbErr("uiscale#2", e)
-}
-}
-let ch = Math.round(scale / gui * 1000) / 1000;
-if (Math.abs(ch - 1) < 0.02) ch = 1;
-if (ch !== _lastCh) {
-_lastCh = ch;
-try {
-document.documentElement.style.setProperty(CH_VAR, String(ch));
-} catch (e) {
-window.__ssbErr("uiscale#6", e)
-}
-}
-try {
-fitPass(scale);
-} catch (e) {
-window.__ssbErr("uiscale#3", e)
-}
-try {
-if (window.__ssbPaintModTop) window.__ssbPaintModTop();
-} catch (e) {
-window.__ssbErr("uiscale#4", e)
-}
-}
-let frame = null,
-retry = null,
-observed = [],
-ro = null,
-mo = null;
-const nativeFrame = window.__ssbNativeFrame;
-function requestLayout() {
-if (document.hidden || document.pointerLockElement || frame !== null) return;
-frame = nativeFrame.request(() => {
-frame = null;
-applyScale();
-});
-}
-window.__ssbRequestLayout = requestLayout;
-function cancelLayout() {
-if (frame !== null) nativeFrame.cancel(frame);
-frame = null;
-clearTimeout(retry);
-retry = null;
-}
-function bindRoots() {
-const roots = FIT_ROOTS.map(sel => document.querySelector(sel)).filter(Boolean);
-const targets = [...new Set(roots.concat(roots.map(el => el.parentElement)).filter(Boolean))];
-if (targets.length === observed.length && targets.every((el, n) => el === observed[n])) return;
-if (ro) ro.disconnect();
-if (mo) mo.disconnect();
-observed = targets;
-if (window.ResizeObserver) {
-ro = new ResizeObserver(requestLayout);
-targets.forEach(el => ro.observe(el));
-}
-mo = new MutationObserver(records => {
-if (records.some(r => !r.target.closest?.("#ch2-preview-wrap") &&
-(r.type === "childList" || r.attributeName === "class" || r.attributeName === "hidden")
-)) requestLayout();
-});
-roots.forEach(el => mo.observe(el, {
-childList: true,
-subtree: true,
-attributes: true,
-attributeFilter: ["class", "hidden"]
-}));
-requestLayout();
-}
-function boot() {
-ensureStyle();
-requestLayout();
-bindRoots();
-window.addEventListener("resize", requestLayout);
-document.addEventListener("fullscreenchange", requestLayout);
-if (document.fonts) document.fonts.ready.then(requestLayout);
-document.addEventListener("ssb:settings-change", requestLayout);
-document.addEventListener("click", e => {
-if (!e.target.closest?.(
-"#mod-settings-section,#mod-crosshair-section,#mod-top-bar,#mod-settings-tab,#mod-crosshair-tab"
-)) return;
-requestLayout();
-clearTimeout(retry);
-retry = setTimeout(requestLayout, 180);
-}, true);
-function reconcile() {
-cancelLayout();
-if (document.hidden || document.pointerLockElement) {
-if (ro) ro.disconnect();
-if (mo) mo.disconnect();
-observed = [];
-} else {
-bindRoots();
-requestLayout();
-}
-}
-document.addEventListener("visibilitychange", reconcile);
-document.addEventListener("pointerlockchange", reconcile);
-window.addEventListener("pagehide", cancelLayout);
-if (document.readyState !== "complete") window.addEventListener("load", requestLayout, {
-once: true
-});
-window.__ssbMenuPoll(() => {
-bindRoots();
-if (_last && !document.documentElement.style.getPropertyValue(VAR_NAME)) {
-_last = 0;
-requestLayout();
-}
-}, 2000);
-}
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-else boot();
+  "use strict";
+  const REF_BASE_PX = 21.06, VAR_NAME = "--ssb-ui-scale", STYLE_ID = "ssb-ui-scale-style", CH_VAR = "--ssb-ch-scale";
+  const ROOTS = ["#mod-crosshair-section", "#ssb-dialog-panel", "#ssb-toast-stack", "#ssb-global-tooltip"];
+  function ensureStyle() {
+    let el = document.getElementById(STYLE_ID);
+    if (!el) {
+      el = document.createElement("style");
+      el.id = STYLE_ID;
+      (document.head || document.documentElement).appendChild(el);
+      el.textContent = ROOTS.join(", ") + " { zoom: var(" + VAR_NAME + ", 1); }\n" +
+        "#mod-crosshair-section { max-height: calc(min(48vh, 100vh - 330px) / var(" + VAR_NAME + ", 1)) !important; min-width: 0; container-type: inline-size; }\n" +
+        "#popupInnards.mod-tab-active { height: min(calc(25em + var(--ss-space-xl) - var(--ss-space-md)), calc(100vh - 330px)); min-height: 0; margin-bottom: var(--ss-space-md) !important; width: min(43.5em, calc(100vw - 6em)) !important; }\n" +
+        "#mod-crosshair-section .ch2-check-label input[type=checkbox] { width:1px; height:1px; }\n" +
+        "#mod-crosshair-section input:focus-visible ~ .ch2-check-box { outline:3px solid var(--ssb-focus); outline-offset:3px; }\n" +
+        ":is(#mod-crosshair-section,#ssb-dialog-panel) :is(button,input,select):focus-visible, #mod-crosshair-tab:focus-visible { outline:3px solid var(--ssb-focus)!important; outline-offset:2px; }\n" +
+        "#mod-crosshair-section .ch2-control-row, #mod-crosshair-section .ch2-control-right { flex-wrap:wrap; }\n" +
+        "#mod-crosshair-section .ch2-label { white-space:normal; }\n" +
+        "#mod-crosshair-section .ch2-check-label { position:relative; }\n" +
+        "#ssb-global-tooltip { max-width:min(250px,calc((100vw - 24px) / var(" + VAR_NAME + ", 1)))!important; box-sizing:border-box; overflow-wrap:anywhere; }\n" +
+        "@container (max-width:520px) { #mod-crosshair-section .ch2-top { flex-direction:column; gap:16px; } #mod-crosshair-section .ch2-preview-col { position:static; width:min(100%,300px); align-self:center; flex:none!important; } #mod-crosshair-section .ch2-right-col { width:100%; } }\n" +
+        "@media (prefers-reduced-motion:reduce) { :is(#mod-crosshair-section,#ssb-dialog-overlay,#ssb-toast-stack) *, #ssb-global-tooltip { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }";
+    }
+    return el;
+  }
+  function fitPass(globalScale) {
+    const el = document.getElementById("mod-crosshair-section");
+    if (!el || !el.offsetParent) return;
+    const vw = document.documentElement.clientWidth || window.innerWidth, vh = document.documentElement.clientHeight || window.innerHeight;
+    const parentW = el.parentElement ? el.parentElement.clientWidth : 0;
+    const key = globalScale + "|" + vw + "x" + vh + "|" + parentW + "|" + el.scrollHeight + "|" + el.childElementCount;
+    if (el.__ssbFitKey === key) return;
+    el.__ssbFitKey = key;
+    let z = globalScale;
+    el.style.zoom = "";
+    for (let i = 0; i < 5; i++) {
+      const cw = el.clientWidth, sw = el.scrollWidth, rect = el.getBoundingClientRect();
+      let shrink = 1;
+      if (cw && sw > cw) shrink = Math.min(shrink, cw / sw);
+      if (rect.width && rect.right > vw - 8) shrink = Math.min(shrink, (vw - 8 - rect.left) / rect.width);
+      if (shrink >= 0.999) break;
+      z = Math.max(0.5, Math.round(z * shrink * 0.995 * 1000) / 1000);
+      el.style.zoom = String(z);
+    }
+    if (z >= globalScale - 0.001 && el.style.zoom) el.style.zoom = "";
+  }
+  let _last = 0, _lastCh = 0;
+  function applyScale() {
+    if (document.hidden || document.pointerLockElement) return;
+    let base = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    let scale = base > 0 ? base / REF_BASE_PX : (window.innerHeight || 1080) / 1080;
+    if (!Number.isFinite(scale) || scale <= 0) scale = 1;
+    if (Math.abs(scale - 1) < 0.02) scale = 1;
+    scale = Math.round(scale * 1000) / 1000;
+    if (scale !== _last) {
+      _last = scale;
+      document.documentElement.style.setProperty(VAR_NAME, String(scale));
+    }
+    if (scale !== _lastCh) {
+      _lastCh = scale;
+      document.documentElement.style.setProperty(CH_VAR, String(scale));
+    }
+    fitPass(scale);
+  }
+  let frame = null, retry = null, observed = [], ro = null, mo = null;
+  function requestLayout() {
+    if (document.hidden || document.pointerLockElement || frame !== null) return;
+    frame = requestAnimationFrame(() => { frame = null; applyScale(); });
+  }
+  window.__ssbRequestLayout = requestLayout;
+  function cancelLayout() {
+    if (frame !== null) cancelAnimationFrame(frame);
+    frame = null;
+    clearTimeout(retry);
+    retry = null;
+  }
+  function bindRoots() {
+    const root = document.getElementById("mod-crosshair-section");
+    const targets = root ? [root, root.parentElement].filter(Boolean) : [];
+    if (targets.length === observed.length && targets.every((el, n) => el === observed[n])) return;
+    if (ro) ro.disconnect();
+    if (mo) mo.disconnect();
+    observed = targets;
+    if (window.ResizeObserver && targets.length) {
+      ro = new ResizeObserver(requestLayout);
+      targets.forEach(el => ro.observe(el));
+    }
+    if (root) {
+      mo = new MutationObserver(records => {
+        if (records.some(r => !r.target.closest?.("#ch2-preview-wrap") && (r.type === "childList" || r.attributeName === "class" || r.attributeName === "hidden"))) requestLayout();
+      });
+      mo.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "hidden"] });
+    }
+    requestLayout();
+  }
+  function bootScale() {
+    ensureStyle();
+    requestLayout();
+    bindRoots();
+    window.addEventListener("resize", requestLayout);
+    document.addEventListener("fullscreenchange", requestLayout);
+    if (document.fonts) document.fonts.ready.then(requestLayout);
+    document.addEventListener("click", e => {
+      if (!e.target.closest?.("#mod-crosshair-section,#mod-crosshair-tab")) return;
+      requestLayout();
+      clearTimeout(retry);
+      retry = setTimeout(requestLayout, 180);
+    }, true);
+    function reconcile() {
+      cancelLayout();
+      if (document.hidden || document.pointerLockElement) {
+        if (ro) ro.disconnect();
+        if (mo) mo.disconnect();
+        observed = [];
+      } else {
+        bindRoots();
+        requestLayout();
+      }
+    }
+    document.addEventListener("visibilitychange", reconcile);
+    document.addEventListener("pointerlockchange", reconcile);
+    window.addEventListener("pagehide", cancelLayout);
+    if (document.readyState !== "complete") window.addEventListener("load", requestLayout, { once: true });
+    window.__ssbMenuPoll(() => {
+      bindRoots();
+      if (_last && !document.documentElement.style.getPropertyValue(VAR_NAME)) {
+        _last = 0;
+        requestLayout();
+      }
+    }, 2000);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bootScale);
+  else bootScale();
 })();
 
   // ---- Lifecycle, Better HUD Coexistence & Mod Menu Integration ----
