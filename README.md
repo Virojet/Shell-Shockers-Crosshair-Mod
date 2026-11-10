@@ -10,6 +10,8 @@ Customize your Shell Shockers crosshair arms, center dot / plus / static cross, 
 [![Install Userscript](https://img.shields.io/badge/Install-Shell--Shockers--Crosshair--Mod.user.js-FAB704?style=for-the-badge&logo=tampermonkey&logoColor=0C576F)](https://raw.githubusercontent.com/Virojet/Shell-Shockers-Crosshair-Mod/main/Shell-Shockers-Crosshair-Mod.user.js)
 [![Version](https://img.shields.io/badge/version-1.0.0-2db8d4?style=for-the-badge)](Shell-Shockers-Crosshair-Mod.user.js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-0C576F?style=for-the-badge)](LICENSE)
+[![Installs](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fabacus.jasoncameron.dev%2Fget%2Fvirojet-crosshair-mod%2Finstalls&query=%24.value&label=installs&color=2ea44f&style=for-the-badge)](#privacy)
+[![Repo views](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Virojet/Shell-Shockers-Crosshair-Mod/main/traffic/views-badge.json&style=for-the-badge)](./traffic/history.json)
 
 </div>
 
@@ -47,6 +49,13 @@ Customize your Shell Shockers crosshair arms, center dot / plus / static cross, 
   - Full 40-step session history (`Ctrl+Z` / `Ctrl+Y` while the Crosshair tab is open, plus **Undo**, **Redo**, and **Revert** buttons).
 - **Mod Menu Support**:
   - Registers with `window.ssModMenuQueue` (`id: "crosshair-mod"`) and exposes `window.ssCrosshairMod` (`open()`, `enable()`, `disable()`, `isEnabled()`, `exportCode()`, `importCode()`, `version`).
+
+---
+
+## Privacy
+
+- **Install count:** the first time it runs, one anonymous hit goes to a public counter ([Abacus](https://abacus.jasoncameron.dev)) so the installs badge above stays current. No settings, crosshairs, names, or IDs are sent. It is sent once per browser (`ssCrosshairMod-install-counted` in `localStorage`).
+- **Your crosshairs:** all settings and profiles stay locally in your browser under `ch2-*` keys.
 
 ---
 

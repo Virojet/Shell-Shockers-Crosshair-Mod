@@ -4685,4 +4685,18 @@ else boot();
     },
     version: VERSION
   };
+
+  // install-counter:begin
+  // Install counter: one anonymous hit per browser, sent once and never again (key "ssCrosshairMod-install-counted").
+  // Nothing is sent but the hit itself: no settings, names or IDs. Total: abacus.jasoncameron.dev/get/virojet-crosshair-mod/installs
+  (() => {
+    const KEY = "ssCrosshairMod-install-counted";
+    try { if (localStorage.getItem(KEY)) return; } catch (e) { return; }
+    setTimeout(() => {
+      fetch("https://abacus.jasoncameron.dev/hit/virojet-crosshair-mod/installs", { credentials: "omit", referrerPolicy: "no-referrer" })
+        .then(r => { if (r.ok) localStorage.setItem(KEY, "1"); })
+        .catch(() => {});
+    }, 8000);
+  })();
+  // install-counter:end
 })();
