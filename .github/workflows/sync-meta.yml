@@ -1,0 +1,29 @@
+name: Sync Userscript Header (.meta.js)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Shell-Shockers-Crosshair-Mod.user.js'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract UserScript header to .meta.js
+        run: |
+          awk '/^\/\/ ==UserScript==/{flag=1} flag{print} /^\/\/ ==\/UserScript==/{exit}' \
+            Shell-Shockers-Crosshair-Mod.user.js > Shell-Shockers-Crosshair-Mod.meta.js
+      - name: Commit updated .meta.js if changed
+        run: |
+          if ! git diff --quiet Shell-Shockers-Crosshair-Mod.meta.js; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add Shell-Shockers-Crosshair-Mod.meta.js
+            git commit -m "chore: sync Shell-Shockers-Crosshair-Mod.meta.js header [skip ci]"
+            git push
+          fi
